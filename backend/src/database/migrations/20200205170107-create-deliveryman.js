@@ -13,7 +13,6 @@ module.exports = {
       },
       avatar_id: {
         type: Sequelize.STRING,
-        allowNull: true,
       },
       email: {
         type: Sequelize.STRING,

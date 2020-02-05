@@ -108,3 +108,6 @@ dist
 
 # Sqlite3 DB files
 *.sqlite3
+
+# Insomnia export file
+routesInsomnia.json
