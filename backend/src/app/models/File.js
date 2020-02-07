@@ -1,9 +1,10 @@
 import Sequelize, { Model } from 'sequelize';
 
-class Signature extends Model {
+class File extends Model {
   static init(sequelize) {
     super.init(
       {
+        name: Sequelize.STRING,
         path: Sequelize.STRING,
         url: {
           type: Sequelize.VIRTUAL,
@@ -21,4 +22,4 @@ class Signature extends Model {
   }
 }
 
-export default Signature;
+export default File;
