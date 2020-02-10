@@ -70,7 +70,18 @@ class PackageController {
   }
 
   async delete(req, res) {
-    //
+    console.log(req.params.id);
+    const packages = await Package.findByPk(req.params.id);
+
+    if (!packages) {
+      return res.status(400).json({ error: 'Package not exists' });
+    }
+
+    await packages.destroy();
+
+    return res
+      .status(200)
+      .json({ sucess: 'The package is deleted successfully' });
   }
 }
 

@@ -111,3 +111,7 @@ dist
 
 # Insomnia export file
 routesInsomnia.json
+
+#File uploads
+tmp/uploads/*
+!tmp/uploads/.gitkeep

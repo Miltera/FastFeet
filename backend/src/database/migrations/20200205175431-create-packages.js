@@ -19,6 +19,12 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
+      signature_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'files', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+      },
       product: {
         type: Sequelize.STRING,
         allowNull: false,
