@@ -7,6 +7,7 @@ import RecipientController from './app/controllers/RecipientController';
 import CourierController from './app/controllers/CourierController';
 import PackageController from './app/controllers/PackageController';
 import FileController from './app/controllers/FileController';
+import DeliveryControler from './app/controllers/DeliveryController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -14,6 +15,8 @@ const routes = new Router();
 const upload = multer(multerConfig);
 
 routes.post('/session', SessionController.store);
+
+routes.get('/deliveries', DeliveryControler.index);
 
 routes.use(authMiddleware);
 

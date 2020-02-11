@@ -62,11 +62,89 @@ class PackageController {
       product,
     });
 
-    return res.json(packages);
+    const completeDelivery = await Package.findByPk(packages.id, {
+      attributes: ['id', 'product'],
+      include: [
+        {
+          model: Courier,
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Recipient,
+          attributes: [
+            'name',
+            'address',
+            'number',
+            'addressLine',
+            'state',
+            'city',
+            'zipCode',
+          ],
+        },
+      ],
+    });
+
+    return res.json(completeDelivery);
   }
 
   async update(req, res) {
-    //
+    const schema = Yup.object().shape({
+      product: Yup.string(),
+      recipient_id: Yup.number(),
+      deliveryman_id: Yup.number(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails!' });
+    }
+    const { id } = req.params;
+    const { recipient_id, deliveryman_id } = req.body;
+
+    const packages = await Package.findByPk(id, {
+      attributes: ['id', 'product'],
+      include: [
+        {
+          model: Courier,
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Recipient,
+          attributes: [
+            'name',
+            'address',
+            'number',
+            'addressLine',
+            'state',
+            'city',
+            'zipCode',
+          ],
+        },
+      ],
+    });
+
+    if (!packages) {
+      return res.status(400).json({ message: 'Package not found!' });
+    }
+
+    if (recipient_id) {
+      const recipient = await Recipient.findByPk(recipient_id);
+
+      if (!recipient) {
+        return res.status(400).json({ message: 'Recipient not found!' });
+      }
+    }
+
+    if (deliveryman_id) {
+      const deliveryman = await Courier.findByPk(deliveryman_id);
+
+      if (!deliveryman) {
+        return res.status(400).json({ message: 'Deliveryman not found!' });
+      }
+    }
+
+    await packages.update(req.body);
+
+    return res.json({ packages });
   }
 
   async delete(req, res) {

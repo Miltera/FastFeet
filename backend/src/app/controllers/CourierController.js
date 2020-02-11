@@ -24,6 +24,16 @@ class CourierController {
       });
     }
 
+    const sameEmail = await Courier.findOne({
+      where: { email: req.body.email },
+    });
+
+    if (sameEmail) {
+      return res.status(400).json({
+        error: 'This e-mail has already been registered to another courier',
+      });
+    }
+
     const courier = await Courier.create(req.body);
 
     return res.json(courier);
