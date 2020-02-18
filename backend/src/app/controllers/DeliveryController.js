@@ -52,6 +52,51 @@ class DeliveryController {
 
     res.json(delivery);
   }
+
+  async show(req, res) {
+    const { id } = req.params;
+    const courier = await Courier.findByPk(id);
+
+    if (!courier) {
+      return res.status(400).json({ error: 'Courier not exists' });
+    }
+
+    const delivery = await Package.findAll({
+      where: {
+        deliveryman_id: id,
+        end_date: {
+          [Op.not]: null,
+        },
+      },
+      attributes: ['id', 'product'],
+      include: [
+        {
+          model: Recipient,
+          attributes: [
+            'name',
+            'address',
+            'number',
+            'addressLine',
+            'state',
+            'city',
+            'zipCode',
+          ],
+        },
+        {
+          model: Courier,
+          attributes: ['name', 'avatar_id', 'email'],
+        },
+      ],
+    });
+
+    if (!delivery.length > 0) {
+      return res
+        .status(400)
+        .json({ error: 'This courier has no one finish deliveries' });
+    }
+
+    res.json(delivery);
+  }
 }
 
 export default new DeliveryController();
