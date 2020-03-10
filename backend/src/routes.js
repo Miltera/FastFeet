@@ -8,6 +8,7 @@ import CourierController from './app/controllers/CourierController';
 import PackageController from './app/controllers/PackageController';
 import FileController from './app/controllers/FileController';
 import DeliveryControler from './app/controllers/DeliveryController';
+import DeliveryStartController from './app/controllers/DeliveryStartController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -18,6 +19,8 @@ routes.post('/session', SessionController.store);
 
 routes.get('/deliveries', DeliveryControler.index);
 routes.get('/deliveryman/:id/deliveries', DeliveryControler.show);
+
+routes.put('/deliveries/:id/start', DeliveryStartController.update);
 
 routes.use(authMiddleware);
 

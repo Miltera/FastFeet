@@ -4,6 +4,9 @@ import Package from '../models/Package';
 import Recipient from '../models/Recipient';
 import Courier from '../models/Courier';
 
+import Queue from '../../lib/Queue';
+import DeliveryMail from '../jobs/DeliveryMail';
+
 class PackageController {
   async index(req, res) {
     const packages = await Package.findAll({
@@ -11,6 +14,7 @@ class PackageController {
       include: [
         {
           model: Recipient,
+          as: 'recipient',
           attributes: [
             'name',
             'address',
@@ -23,6 +27,7 @@ class PackageController {
         },
         {
           model: Courier,
+          as: 'courier',
           attributes: ['name', 'avatar_id', 'email'],
         },
       ],
@@ -67,10 +72,12 @@ class PackageController {
       include: [
         {
           model: Courier,
+          as: 'courier',
           attributes: ['name', 'email'],
         },
         {
           model: Recipient,
+          as: 'recipient',
           attributes: [
             'name',
             'address',
@@ -83,6 +90,8 @@ class PackageController {
         },
       ],
     });
+
+    await Queue.add(DeliveryMail.key, { completeDelivery });
 
     return res.json(completeDelivery);
   }

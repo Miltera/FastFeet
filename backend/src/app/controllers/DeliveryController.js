@@ -23,10 +23,11 @@ class DeliveryController {
           [Op.is]: null,
         },
       },
-      attributes: ['id', 'product'],
+      attributes: ['id', 'product', 'start_date'],
       include: [
         {
           model: Recipient,
+          as: 'recipient',
           attributes: [
             'name',
             'address',
@@ -39,6 +40,7 @@ class DeliveryController {
         },
         {
           model: Courier,
+          as: 'courier',
           attributes: ['name', 'avatar_id', 'email'],
         },
       ],
@@ -72,6 +74,7 @@ class DeliveryController {
       include: [
         {
           model: Recipient,
+          as: 'recipient',
           attributes: [
             'name',
             'address',
@@ -84,6 +87,7 @@ class DeliveryController {
         },
         {
           model: Courier,
+          as: 'courier',
           attributes: ['name', 'avatar_id', 'email'],
         },
       ],

@@ -110,7 +110,7 @@ dist
 *.sqlite3
 
 # Insomnia export file
-routesInsomnia.json
+# routesInsomnia.json
 
 #File uploads
 tmp/uploads/*
