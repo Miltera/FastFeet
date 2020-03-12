@@ -36,7 +36,9 @@ class CourierController {
 
     const courier = await Courier.create(req.body);
 
-    return res.json(courier);
+    const { id, name, email } = courier;
+
+    return res.json({ id, name, email });
   }
 
   async update(req, res) {
@@ -61,7 +63,9 @@ class CourierController {
 
     courier = await courier.update(req.body);
 
-    return res.json(courier);
+    const { id, name, email } = courier;
+
+    return res.json({ id, name, email });
   }
 
   async delete(req, res) {

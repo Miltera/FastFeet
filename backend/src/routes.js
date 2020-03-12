@@ -9,6 +9,7 @@ import PackageController from './app/controllers/PackageController';
 import FileController from './app/controllers/FileController';
 import DeliveryControler from './app/controllers/DeliveryController';
 import DeliveryStartController from './app/controllers/DeliveryStartController';
+import DeliveryFinishController from './app/controllers/DeliveryFinishController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -21,6 +22,7 @@ routes.get('/deliveries', DeliveryControler.index);
 routes.get('/deliveryman/:id/deliveries', DeliveryControler.show);
 
 routes.put('/deliveries/:id/start', DeliveryStartController.update);
+routes.put('/deliveries/:id/finish', DeliveryFinishController.update);
 
 routes.use(authMiddleware);
 

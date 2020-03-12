@@ -71,11 +71,6 @@ class PackageController {
       attributes: ['id', 'product'],
       include: [
         {
-          model: Courier,
-          as: 'courier',
-          attributes: ['name', 'email'],
-        },
-        {
           model: Recipient,
           as: 'recipient',
           attributes: [
@@ -87,6 +82,11 @@ class PackageController {
             'city',
             'zipCode',
           ],
+        },
+        {
+          model: Courier,
+          as: 'courier',
+          attributes: ['name', 'email'],
         },
       ],
     });

@@ -1,13 +1,28 @@
-import { parseISO, startOfDay, endOfDay } from 'date-fns';
+import * as Yup from 'yup';
+
+import { parseISO } from 'date-fns';
 import { Op } from 'sequelize';
 
 import Package from '../models/Package';
 import Recipient from '../models/Recipient';
 import Courier from '../models/Courier';
+import File from '../models/File';
 
-class DeliveryStartController {
+class DeliveryFinishController {
   async update(req, res) {
-    const { deliveryman_id, start_date } = req.body;
+    const schema = Yup.object().shape({
+      deliveryman_id: Yup.number().required(),
+      end_date: Yup.date().required(),
+      signature_id: Yup.number().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({
+        error: 'Validation fails',
+      });
+    }
+
+    const { deliveryman_id, end_date, signature_id } = req.body;
     const { id } = req.params;
     let courier = await Courier.findByPk(deliveryman_id);
 
@@ -15,8 +30,12 @@ class DeliveryStartController {
       return res.status(400).json({ error: 'Courier not exists' });
     }
 
-    const delivery = await Package.findByPk(id, {
-      attributes: ['id', 'product', 'start_date'],
+    const delivery = await Package.findOne({
+      where: {
+        id,
+        start_date: { [Op.not]: null },
+      },
+      attributes: ['id', 'product', 'end_date'],
       include: [
         {
           model: Recipient,
@@ -41,7 +60,7 @@ class DeliveryStartController {
 
     if (!delivery) {
       return res.status(400).json({
-        error: 'This package not exists',
+        error: 'The package does not exist or was not picked up by the courier',
       });
     }
 
@@ -51,37 +70,25 @@ class DeliveryStartController {
       });
     }
 
-    if (delivery.start_date != null) {
+    if (delivery.end_date != null) {
       return res.status(400).json({
-        error: 'This package already is in route to delivery',
+        error: 'The package has already been delivered',
       });
     }
 
-    const numberDelivery = await Package.count({
-      where: {
-        deliveryman_id,
-        start_date: {
-          [Op.between]: [
-            startOfDay(parseISO(start_date)),
-            endOfDay(parseISO(start_date)),
-          ],
-        },
-      },
-    });
+    const signatureImage = await File.findByPk(signature_id);
 
-    if (numberDelivery == 5) {
-      return res.status(400).json({
-        error:
-          'The courier has already reached the maximum number of daily deliveries',
-      });
+    if (!signatureImage) {
+      return res.status(400).json({ error: 'Signature image does not exists' });
     }
 
     await delivery.update({
-      start_date: parseISO(start_date),
+      signature_id,
+      end_date: parseISO(end_date),
     });
 
     return res.json(delivery);
   }
 }
 
-export default new DeliveryStartController();
+export default new DeliveryFinishController();
